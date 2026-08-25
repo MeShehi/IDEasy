@@ -46,7 +46,19 @@ public class App extends Application {
   TaskManager taskManager = new TaskManager();
   GuiStateManager guiStateManager = new GuiStateManager(taskManager, null);
 
+  private String ideRoot = System.getenv(IdeVariables.IDE_ROOT.getName());
+
   private static final Logger LOG = LoggerFactory.getLogger(App.class);
+
+  App() {
+  }
+
+  App(String ideRoot, GuiStateManager guiStateManager, NlsService nlsService) {
+
+    this.ideRoot = ideRoot;
+    this.guiStateManager = guiStateManager;
+    this.nlsService = nlsService;
+  }
 
   @Override
   public void start(Stage primaryStage) throws IOException {
@@ -124,11 +136,11 @@ public class App extends Application {
     }
   }
 
-  private Parent loadMainView() throws IOException {
+  Parent loadMainView() throws IOException {
 
     FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("main-view.fxml"));
     fxmlLoader.setResources(this.nlsService.getResourceBundle());
-    MainController controller = new MainController(System.getenv(IdeVariables.IDE_ROOT.getName()), guiStateManager, this.nlsService);
+    MainController controller = new MainController(this.ideRoot, guiStateManager, this.nlsService);
     fxmlLoader.setControllerFactory(type -> controller);
     return fxmlLoader.load();
   }

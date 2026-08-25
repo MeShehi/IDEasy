@@ -4,12 +4,10 @@ import static org.testfx.assertions.api.Assertions.assertThat;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
 
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Locale;
 
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -55,14 +53,8 @@ public class AppBaseTest extends HeadlessApplicationTest {
 
     NlsService nlsService = new NlsService(Locale.ENGLISH);
 
-    URL mainViewUrl = getClass().getResource("main-view.fxml");
-    assertThat(mainViewUrl).as("Cannot resolve main UI FXML resource!").isNotNull();
-
-    FXMLLoader fxmlLoader = new FXMLLoader(mainViewUrl);
-    MainController controller = new MainController(mockIdeRoot.toString(), guiStateManager, nlsService);
-    fxmlLoader.setControllerFactory(type -> controller);
-    fxmlLoader.setResources(nlsService.getResourceBundle());
-    Parent root = fxmlLoader.load();
+    App app = new App(mockIdeRoot.toString(), guiStateManager, nlsService);
+    Parent root = app.loadMainView();
     stage.setScene(new Scene(root));
     stage.requestFocus(); //sometimes needed for headless setup to work
     stage.show();
